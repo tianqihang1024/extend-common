@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * @author 田奇杭
- * @Description
+ * @Description 非阻塞的分布式锁
  * @Date 2022/9/10 17:47
  */
 @Slf4j
@@ -39,6 +39,18 @@ public class RedisLockUtil implements ApplicationContextAware {
 
     /**
      * 加锁
+     * 一行代码一行注释，自行联想
+     * key 尚未被抢占
+     *      使用 hash 存储锁信息 key 持有锁的线程 重入次数
+     *      设置传入的过期时间
+     *      返回 true
+     *      终止
+     * key 的所有者是当前线程
+     *      重入次数 +1
+     *      设置传入的过期时间
+     *      返回 true
+     *      终止
+     * 抢占锁失败返回 false
      */
     private static final String LOCK_LUA = "if (redis.call('exists', KEYS[1]) == 0) then  " +
             "    redis.call('hincrby', KEYS[1], ARGV[2], 1);  " +
@@ -54,12 +66,23 @@ public class RedisLockUtil implements ApplicationContextAware {
 
     /**
      * 释放锁
+     *
+     * key 不存在
+     *      返回 false
+     *      终止
+     * key 的重入次数减一后大于 0
+     *      设置传入的过期时间
+     *      返回 true
+     *      不大于 0
+     *      删除 key，释放锁
+     *      返回 true
+     *      终止
+     * 释放锁失败返回 false
      */
     private static final String UNLOCK_LUA = "if (redis.call('hexists', KEYS[1], ARGV[2]) == 0) then " +
             "    return false; " +
             "    end; " +
-            "local counter = redis.call('hincrby', KEYS[1], ARGV[2], -1); " +
-            "if (counter > 0) then " +
+            "if (tonumber(redis.call('hincrby', KEYS[1], ARGV[2], -1)) > 0) then " +
             "    redis.call('pexpire', KEYS[1], ARGV[1]); " +
             "    return true; " +
             "    else " +
