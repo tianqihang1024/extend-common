@@ -1,18 +1,22 @@
 package extend.message;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 /**
  * @author 田奇杭
- * @Description 基础消息实体
- * @Date 2022/9/3 10:46
+ * @description 基础消息实体
+ * @date 2022/9/3 10:46
  * 基础消息实体，包含一些基础的消息信息
  * 所有消息对象必须继承此对象
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class BaseMessage {
 
     /**
@@ -40,76 +44,4 @@ public class BaseMessage {
      */
     protected Integer retryTimes = 0;
 
-    public BaseMessage() {
-    }
-
-    public BaseMessage(String key, String source) {
-        this.key = key;
-        this.source = source;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    public String getSource() {
-        return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
-    }
-
-    public String getSendTime() {
-        return sendTime;
-    }
-
-    public void setSendTime(String sendTime) {
-        this.sendTime = sendTime;
-    }
-
-    public String getTraceId() {
-        return traceId;
-    }
-
-    public void setTraceId(String traceId) {
-        this.traceId = traceId;
-    }
-
-    public Integer getRetryTimes() {
-        return retryTimes;
-    }
-
-    public void setRetryTimes(Integer retryTimes) {
-        this.retryTimes = retryTimes;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        BaseMessage that = (BaseMessage) o;
-
-        if (getKey() != null ? !getKey().equals(that.getKey()) : that.getKey() != null) return false;
-        if (getSource() != null ? !getSource().equals(that.getSource()) : that.getSource() != null) return false;
-        if (getSendTime() != null ? !getSendTime().equals(that.getSendTime()) : that.getSendTime() != null)
-            return false;
-        if (getTraceId() != null ? !getTraceId().equals(that.getTraceId()) : that.getTraceId() != null) return false;
-        return getRetryTimes() != null ? getRetryTimes().equals(that.getRetryTimes()) : that.getRetryTimes() == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getKey() != null ? getKey().hashCode() : 0;
-        result = 31 * result + (getSource() != null ? getSource().hashCode() : 0);
-        result = 31 * result + (getSendTime() != null ? getSendTime().hashCode() : 0);
-        result = 31 * result + (getTraceId() != null ? getTraceId().hashCode() : 0);
-        result = 31 * result + (getRetryTimes() != null ? getRetryTimes().hashCode() : 0);
-        return result;
-    }
 }
